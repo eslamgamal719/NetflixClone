@@ -2,10 +2,11 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
 
 class User extends Authenticatable
 {
@@ -43,49 +44,60 @@ class User extends Authenticatable
     protected $withCount = ['movies'];
 
 
-
-
-
-
-    public function getNameAttribute($val) {
+    public function getNameAttribute($val)
+    {
         return ucfirst($val);
     }
 
 
     //Scopes -------------------------------------------------------------------------------------
 
-    public function scopeWhereRole($query, $role_name) {
-        return $query->whereHas('roles', function($q) use ($role_name) {
+    public function scopeWhereRole($query, $role_name)
+    {
+        return $query->whereHas('roles', function ($q) use ($role_name) {
+
             return $q->whereIn('name', (array)$role_name)
                 ->orWhereIn('id', (array)$role_name);
+
         });
     }
 
-    public function scopeWhereRoleNot($query, $role_name) {
-        return $query->whereHas('roles', function($q) use($role_name) {
+    public function scopeWhereRoleNot($query, $role_name)
+    {
+        return $query->whereHas('roles', function ($q) use ($role_name) {
+
             return $q->whereNotIn('name', (array)$role_name)
                 ->whereNotIn('id', (array)$role_name);
+
         });
     }
 
 
-    public function scopeWhenSearch($query, $search) {
-        return $query->when($search, function($q) use ($search) {
+    public function scopeWhenSearch($query, $search)
+    {
+        return $query->when($search, function ($q) use ($search) {
+
             return $q->where('name', 'like', "%$search%");
+
         });
     }
 
 
-    public function scopeWhenRole($query, $role_id) {
-        return $query->when($role_id, function($q) use($role_id) {
+    public function scopeWhenRole($query, $role_id)
+    {
+        return $query->when($role_id, function ($q) use ($role_id) {
+
             return $this->scopeWhereRole($q, $role_id);
+
         });
     }
 
 
     //Relations -------------------------------------------------------------
 
-    public function movies() {
+    public function movies()
+    {
         return $this->belongsToMany(Movie::class, 'user_movie');
+
     }
 }

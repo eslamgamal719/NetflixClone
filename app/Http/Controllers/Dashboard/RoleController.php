@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Http\Controllers\Controller;
 use App\Role;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class RoleController extends Controller
 {
@@ -39,8 +39,10 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+
             'name' => 'required|unique:roles,name',
             'permissions' => 'required|array|min:1'
+
         ]);
 
         $role = Role::create($request->all());
@@ -61,8 +63,10 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $request->validate([
+
             'name' => 'required|unique:roles,name,' . $role->id,
             'permissions' => 'required|array|min:1'
+
         ]);
 
         $role->update($request->all());

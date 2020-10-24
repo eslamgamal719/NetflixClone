@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Category;
-use App\Http\Controllers\Controller;
-use App\Jobs\StreamMovie;
 use App\Movie;
+use App\Category;
+use App\Jobs\StreamMovie;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
+
 
 class MovieController extends Controller
 {
@@ -39,17 +40,20 @@ class MovieController extends Controller
     {
         $categories = Category::all();
         $movie = Movie::create([]);
+
         return view('dashboard.movies.create', compact('movie', 'categories'));
     }
 
 
     public function store(Request $request)
     {
-       $movie = Movie::FindOrFail($request->movie_id);
+        $movie = Movie::FindOrFail($request->movie_id);
 
         $movie->update([
+
             'name' => $request->name,
             'path' => $request->file('movie')->store('movies'),
+
         ]);
 
         //job to encode the movie in the background
@@ -59,15 +63,16 @@ class MovieController extends Controller
     }
 
 
-    public function show(Movie $movie) {
+    public function show(Movie $movie)
+    {
         return $movie;
     }
-
 
 
     public function edit(Movie $movie)
     {
         $categories = Category::all();
+
         return view('dashboard.movies.edit', compact('movie', 'categories'));
     }
 
@@ -75,9 +80,10 @@ class MovieController extends Controller
     public function update(Request $request, Movie $movie)
     {
 
-        if($request->type == 'publish') {
+        if ($request->type == 'publish') {
 
             $request->validate([
+
                 'name' => 'required|unique:movies,name,' . $movie->id,
                 'description' => 'required',
                 'poster' => 'required|image',
@@ -85,11 +91,13 @@ class MovieController extends Controller
                 'categories' => 'required|array',
                 'year' => 'required',
                 'rating' => 'required',
+
             ]);
 
         } else {
 
             $request->validate([
+
                 'name' => 'required|unique:movies,name,' . $movie->id,
                 'description' => 'required',
                 'poster' => 'nullable|image',
@@ -97,12 +105,13 @@ class MovieController extends Controller
                 'categories' => 'required|array',
                 'year' => 'required',
                 'rating' => 'required',
+
             ]);
         } //end of else
 
         $request_data = $request->except(['poster', 'image']);
 
-        if($request->poster) {
+        if ($request->poster) {
 
             $this->remove_previous('poster', $movie);
 
@@ -114,7 +123,7 @@ class MovieController extends Controller
 
         } //end of if
 
-        if($request->image) {
+        if ($request->image) {
 
             $this->remove_previous('image', $movie);
 
@@ -149,17 +158,16 @@ class MovieController extends Controller
     }
 
 
+    private function remove_previous($image_type, $movie)
+    {
 
-
-    private function remove_previous($image_type, $movie) {
-
-        if($image_type == 'poster') {
-                if($movie->poster != null)
-                    Storage::disk('local')->delete('public/images/' . $movie->poster);
+        if ($image_type == 'poster') {
+            if ($movie->poster != null)
+                Storage::disk('local')->delete('public/images/' . $movie->poster);
 
         } else {
 
-            if($movie->image != null)
+            if ($movie->image != null)
                 Storage::disk('local')->delete('public/images/' . $movie->image);
         }
     }

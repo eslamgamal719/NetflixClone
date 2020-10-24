@@ -10,10 +10,13 @@ class MovieController extends Controller
 
     public function index()
     {
+        if(request()->ajax()) {
+            $movies = Movie::whenSearch(request()->search)->get();
+            return $movies;
+        }
+
         $movies = Movie::whenCategory(request()->category_name)
-
             ->whenFavorite(request()->favorite)
-
             ->paginate(20);
 
         return view('movies.index', compact('movies'));
@@ -24,16 +27,14 @@ class MovieController extends Controller
     public function show(Movie $movie)
     {
         $related_movies = Movie::where('id', '!=', $movie->id)
-
-                ->whereHas('categories', function ($query) use ($movie) {
+            ->whereHas('categories', function ($query) use ($movie) {
 
                 return $query->whereIn('category_id', $movie->categories->pluck('id')->toArray());
 
-                })->get();
+            })->get();
 
         return view('movies.show', compact('movie', 'related_movies'));
     }
-
 
 
     public function increment_views(Movie $movie)

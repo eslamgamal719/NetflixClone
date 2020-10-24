@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Http\Controllers\Controller;
 use App\Role;
 use App\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
 
 class UserController extends Controller
 {
@@ -29,6 +30,7 @@ class UserController extends Controller
             ->whenRole(request()->role_id)
             ->with('roles')
             ->paginate(5);
+
         return view('dashboard.users.index', compact('roles' ,'users'));
     }
 
@@ -36,6 +38,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::whereRoleNot(['super_admin', 'admin'])->get();
+
         return view('dashboard.users.create', compact('roles'));
     }
 
@@ -43,10 +46,12 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'role_id' => 'required|numeric'
+
         ]);
 
         $request->merge(['password' => bcrypt($request->password)]);
@@ -63,6 +68,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::whereRoleNot(['super_admin', 'admin'])->get();
+
         return view('dashboard.users.edit', compact('user', 'roles'));
     }
 
@@ -70,9 +76,11 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
+
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role_id' => 'required|numeric'
+
         ]);
 
         $user->update($request->all());

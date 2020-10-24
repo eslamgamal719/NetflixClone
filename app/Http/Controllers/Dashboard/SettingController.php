@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
 
 class SettingController extends Controller
 {
@@ -20,7 +22,8 @@ class SettingController extends Controller
     }
 
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
         setting($request->all())->save();
 

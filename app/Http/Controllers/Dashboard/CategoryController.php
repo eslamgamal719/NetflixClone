@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Category;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
 
 class CategoryController extends Controller
 {
@@ -33,7 +34,9 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+
             'name' => 'required|unique:categories,name'
+
         ]);
 
         Category::create($request->all());
@@ -53,7 +56,9 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $request->validate([
+
             'name' => 'required|unique:categories,name,' . $category->id
+
         ]);
 
         $category->update($request->all());
