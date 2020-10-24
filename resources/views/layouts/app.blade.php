@@ -17,6 +17,9 @@
     <!--bootstrap-->
     <link rel="stylesheet" href="{{asset('css/bootstrap.min.css')}}">
 
+    <!--autocomplete-->
+    <link rel="stylesheet" href="{{asset('plugins/easyautocomplete/easy-autocomplete.min.css')}}">
+
     <!--vendor css-->
     <link rel="stylesheet" href="{{asset('css/vendor.min.css')}}">
 
@@ -31,6 +34,20 @@
         .fw-900 {
             font-weight: 900;
         }
+
+
+        .easy-autocomplete {
+            width: 90%;
+        }
+
+        .easy-autocomplete input{
+            color:white !important;
+        }
+
+        .eac-icon-left .eac-item img{
+            max-height: 80px !important;
+        }
+
     </style>
 </head>
 <body>
@@ -55,6 +72,9 @@
 <!--player js-->
 <script src="{{asset('js/playerjs.js')}}"></script>
 
+<!--easy autocomplete-->
+<script src="{{asset('plugins/easyautocomplete/jquery.easy-autocomplete.min.js')}}"></script>
+
 <!--custom JS-->
 <script src="{{asset('js/custom/custom.js')}}"></script>
 
@@ -69,6 +89,32 @@
         }
     });
 
+
+    var options = {
+        url: function (search) {
+            return "/movies?search=" + search;
+        },
+
+        getValue: "name",
+
+        template: {
+            type: "iconLeft",
+            fields: {
+                iconSrc: "poster_path"
+            }
+        },
+
+        list: {
+            onChooseEvent: function () {
+                var movie = $('.form-control[type="search"]').getSelectedItemData();
+                var url = window.location.origin + '/movies/' + movie.id;
+                window.location.replace(url);
+            }
+        }
+    };
+
+
+    $('.form-control[type="search"]').easyAutocomplete(options);
 
 
     $(document).ready(function () {
